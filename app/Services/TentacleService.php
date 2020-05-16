@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\TentacleRepository;
 use App\Lib\DiceLauncher;
+use App\Http\Requests\TentacleAddRequest;
+use Illuminate\Http\Request;
 
 class TentacleService extends BaseService
 {
@@ -24,17 +26,18 @@ class TentacleService extends BaseService
     /**
      * Create a new tentacle
      * @method create
-     * @param  array $inputs [description]
+     * @param  Request $request [description]
      * @return [type]         [description]
      */
-    public function create($inputs)
+    public function create(Request $request)
     {
+        $inputs = $request->all();
         $inputs['point_de_vie'] = $this->diceLauncher->rollDices("6D6");
         //strength/dexterity/stamina at 2D3 + 10
         $inputs['strength'] = $this->diceLauncher->rollDices("2D3", 10);
         $inputs['dexterity'] = $this->diceLauncher->rollDices("2D3", 10);
         $inputs['stamina'] = $this->diceLauncher->rollDices("2D3", 10);
-    	return parent::create($inputs);
+    	return $this->repo->store($inputs);
     }
 
     /**
@@ -58,12 +61,13 @@ class TentacleService extends BaseService
     /**
      * Is action requested can be processed
      * @method isActionValid
-     * @param  array         $inputs [description]
+     * @param  TentacleAddRequest   $request [description]
      * @param  KrakenService        $kraken [description]
      * @return boolean               [description]
      */
-    public function isActionValid(array $inputs, $kraken)
+    public function isActionValid(TentacleAddRequest $request, $kraken)
     {
+        $inputs = $request->all();
     	if(!$kraken->isExist($inputs['kraken_id'])) {
     		$this->error = __('messages.kraken_not_found');
 			return false;

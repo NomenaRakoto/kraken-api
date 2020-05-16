@@ -32,8 +32,8 @@ class PowerController extends APIController
 	 */
 	public function add(PowerAddRequest $request, KrakenService $kraken)
 	{
-		if($this->powerService->isActionValid($request->all(), $kraken)) {
-			$power = $this->powerService->create($request->all());
+		if($this->powerService->isActionValid($request, $kraken)) {
+			$power = $this->powerService->create($request);
 			return $this->sendResponse($power, __('messages.add_power_success_message'));
 		} else {
 			return $this->sendError(__("messages.unauthorised_action_error"), ['error' =>  $this->powerService->getError()], 403);

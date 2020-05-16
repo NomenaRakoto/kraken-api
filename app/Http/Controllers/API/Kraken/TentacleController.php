@@ -25,17 +25,18 @@ class TentacleController extends APIController
 	{
 		$this->tentacleService = $tentacleService;
 	}
-
+	
 	/**
-	 * add a tentacle to a kraken
+	 * [add description]
 	 * @method add
 	 * @param  TentacleAddRequest $request [description]
+	 * @param  KrakenService      $kraken  [description]
 	 * @return \Illuminate\Http\Response
 	 */
 	public function add(TentacleAddRequest $request, KrakenService $kraken)
 	{
-		if($this->tentacleService->isActionValid($request->all(), $kraken)) {
-			$power = $this->tentacleService->create($request->all());
+		if($this->tentacleService->isActionValid($request, $kraken)) {
+			$power = $this->tentacleService->create($request);
 			return $this->sendResponse($power, __('messages.add_tentacle_success_message'));
 		} else {
 			return $this->sendError(__("messages.unauthorised_action_error"), ['error' =>  $this->tentacleService->getError()], 403);

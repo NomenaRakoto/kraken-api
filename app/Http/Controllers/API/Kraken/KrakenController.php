@@ -32,7 +32,7 @@ class KrakenController extends APIController
 	 */
 	public function create(KrakenCreateRequest $request)
 	{
-		$kraken = $this->krakenService->create($request->all());
+		$kraken = $this->krakenService->create($request);
 		return $this->sendResponse($kraken, __('messages.create_kraken_success'));
 	}
 

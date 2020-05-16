@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\PowerRepository;
 use App\Lib\DiceLauncher;
+use App\Http\Requests\PowerAddRequest;
+use Illuminate\Http\Request;
 
 class PowerService extends BaseService
 {
@@ -21,16 +23,18 @@ class PowerService extends BaseService
         $this->diceLauncher = new DiceLauncher();
     }
 
+    
     /**
      * Create Power
      * @method create
-     * @param  array $inputs [description]
-     * @return [type]         [description]
+     * @param  Request $request [description]
+     * @return [type]           [description]
      */
-    public function create($inputs)
+    public function create(Request $request)
     {
+        $inputs = $request->all();
     	$inputs['max_usage'] = $this->diceLauncher->rollDices("2D4");
-    	return parent::create($inputs);
+        return $this->repo->store($inputs);
     }
 
     /**
@@ -50,12 +54,13 @@ class PowerService extends BaseService
     /**
      * Is action requested can be processed
      * @method isActionValid
-     * @param  array         $inputs [description]
+     * @param  PowerAddRequest      $request [description]
      * @param  KrakenService        $kraken [description]
      * @return boolean               [description]
      */
-    public function isActionValid(array $inputs, $kraken)
+    public function isActionValid(PowerAddRequest $request, $kraken)
     {
+        $inputs = $request->all();
     	if(!$kraken->isExist($inputs['kraken_id'])) {
     		$this->error = __('messages.kraken_not_found');
 			return false;
